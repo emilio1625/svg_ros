@@ -4,8 +4,8 @@
  *  =================== *
  *                                                                               *
  *  Description: * It controls the movement of a robot using state machines.
- ** It uses a real robot or a simulated one.
- **
+ *  It uses a real robot or a simulated one.
+ *
  *                                                                               *
  *                               J. Savage *
  *                                                                               *
@@ -33,13 +33,14 @@
 #include "state_machines/state_machine_avoidance_destination.h"
 #include "state_machines/state_machine_follow_wall.h"
 #include "state_machines/state_machine_surround_obstacle.h"
+#include "potential_fields/potential_fields.h"
 
 #include "ros/ros.h"
 #include "ROSutilities/receiveInputs.h"
 #include "ROSutilities/ros_util.h"
 #include "ROSutilities/over_state.h"
 
-float K_GOAL = CNT_GOAL * MAG_ADVANCE;
+float K_GOAL = static_cast<float>(CNT_GOAL * MAG_ADVANCE);
 
 // it moves the robot from the origen to the destination using state machines
 int go_to(int flag_environment, int flag_laser, int flag_light) {
@@ -117,7 +118,7 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
 
     flg = 0;
 
-    K_GOAL = CNT_GOAL * inputs.Mag_Advance;
+    K_GOAL = static_cast<float>(CNT_GOAL * inputs.Mag_Advance);
 
     // it moves the robot to the final destination
     while (flg == 0) {

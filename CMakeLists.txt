@@ -111,10 +111,10 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-        INCLUDE_DIRS include
-        #  LIBRARIES svg_ros
-        CATKIN_DEPENDS message_generation message_runtime roscpp rospy std_msgs
-        #  DEPENDS system_lib
+    INCLUDE_DIRS include
+#    LIBRARIES svg_ros
+    CATKIN_DEPENDS message_generation message_runtime roscpp rospy std_msgs
+#    DEPENDS system_lib
 )
 
 ###########
@@ -124,8 +124,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-        include
-        ${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -226,3 +226,8 @@ add_dependencies(sensor_node svg_ros_generate_messages_cpp)
 add_executable(base_node src/ROSutilities/base_node.cpp)
 target_link_libraries(base_node ${catkin_LIBRARIES})
 add_dependencies(base_node svg_ros_generate_messages_cpp)
+
+FILE(GLOB_RECURSE all_headers_for_ides
+        ${CMAKE_SOURCE_DIR}/**/*.hpp
+        ${CMAKE_SOURCE_DIR}/**/*.h)
+ADD_CUSTOM_TARGET(ide_includes SOURCES ${all_headers_for_ides})

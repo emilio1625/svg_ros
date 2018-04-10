@@ -402,7 +402,6 @@ int quantize_intensity(coord coord_robot,coord coor_destination){
 */
 
 
-
 // it gets the range from the laser sensors
 void get_average_sensor(Raw observations, int start, int end, float *average) {
     int i;
