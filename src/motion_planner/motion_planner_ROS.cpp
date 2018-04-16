@@ -21,6 +21,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <potential_fields/arbiter.h>
 // Robotics include files
 
 #include "utilities/constants.h"
@@ -76,8 +77,10 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
     AdvanceAngle mov_vector_avoidance_destination;
     AdvanceAngle mov_vector_follow_wall;
     AdvanceAngle mov_vector_surround_obstacle;
+    AdvanceAngle mov_vector_potential_fields;
     int selection = 3;
     float largest_value;
+
 
     // get inputs from GUI
     std::string inputs_node_name = "receiveInputs";
@@ -119,6 +122,16 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
     flg = 0;
 
     K_GOAL = static_cast<float>(CNT_GOAL * inputs.Mag_Advance);
+
+
+    // potential fields
+    float d = 0.03;
+    float e = 2;
+    float d0 = inputs.largest_value * 8;
+    float eta = 0.003;
+    float params[] = {d, e, d0, eta};
+    coord coords[2];
+
 
     // it moves the robot to the final destination
     while (flg == 0) {
@@ -247,6 +260,23 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
                         inputs.max_angle);
                 DistTheta.angle = mov_vector_follow_wall.angle;
                 DistTheta.distance = mov_vector_follow_wall.distance;
+                // printf("movement avoidance destination: angle  %f distance %f\n",
+                // mov_vector_avoidance_destination.angle,mov_vector_avoidance_destination.distance);
+                break;
+
+            case 6:
+                // It calculates the robot's movement using potential fields, if fails then uses an state
+                // machine made that surrounds obstacles
+                coords[0] = coord_robot;
+                coords[1] = coord_dest;
+                state = next_state_surround_obstacle;
+                mov_vector_potential_fields = gen_next_pos(params, coords, inputs, observations);
+                /*if (((mov_vector_potential_fields.distance == -1.0f) && (mov_vector_potential_fields.angle == -1.0f)) || next_state_surround_obstacle != 0)
+                    mov_vector_potential_fields = state_machine_surround_obstacle(
+                        quantized_obs, state, &next_state_surround_obstacle, inputs.Mag_Advance,
+                        inputs.max_angle);*/
+                DistTheta.angle = mov_vector_potential_fields.angle;
+                DistTheta.distance = mov_vector_potential_fields.distance;
                 // printf("movement avoidance destination: angle  %f distance %f\n",
                 // mov_vector_avoidance_destination.angle,mov_vector_avoidance_destination.distance);
                 break;

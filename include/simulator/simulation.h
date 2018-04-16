@@ -16,6 +16,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "ros/ros.h"
+#include "utilities/structures.h"
 
 #define LARGEST_DISTANCE_SENSORS 5.0 // 5.0 meters
 #define MAX_NUM_SENSORS 1024
