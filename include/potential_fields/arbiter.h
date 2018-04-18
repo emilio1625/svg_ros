@@ -6,8 +6,8 @@
 #include "potential_fields.h"
 #include <cmath>
 
-AdvanceAngle gen_next_pos(float params[], coord coords[], Inputs inputs, Raw observations) {
-    static coord last_pos;
+AdvanceAngle gen_next_pos(float params[], coord coords[], Inputs inputs, Raw observations, int *stflag) {
+    static coord last_pos[2];
     float d = params[0], e = params[1], d0 = params[2], eta = params[3];
     coord robot = coords[0], dest = coords[1];
     coord obs = get_obs_location(inputs.num_sensors, inputs.theta_sensor, inputs.range_sensor, inputs.largest_value, observations, robot);
@@ -28,8 +28,14 @@ AdvanceAngle gen_next_pos(float params[], coord coords[], Inputs inputs, Raw obs
     /*printf("displacement arbiter: %f, %f\n", displacement.distance, displacement.angle);
     printf("next_pos: %f, %f\n", next_pos.xc, next_pos.yc);
     printf("last_pos: %f, %f\n", last_pos.xc, last_pos.yc);
-    printf("robot_pos: %f, %f\n", robot.xc, robot.yc);
-    getchar();*/
+    printf("robot_pos: %f, %f\n", robot.xc, robot.yc);*/
+    //getchar();
+
+    if (std::abs(last_pos[0].anglec) == std::abs(robot.anglec) || std::abs(last_pos[1].anglec) == std::abs(robot.anglec)) {
+        *stflag = 1;
+        printf ("Aqui D;");
+    }
+
 
     last_pos = robot;
     return displacement;

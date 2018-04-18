@@ -125,6 +125,7 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
 
 
     // potential fields
+    int nestados = 0, stflag=0;
     float d = 0.05;
     float e = 2;
     float d0 = inputs.largest_value * 0.5f;
@@ -270,13 +271,23 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
                 coords[0] = coord_robot;
                 coords[1] = coord_dest;
                 state = next_state_surround_obstacle;
-                mov_vector_potential_fields = gen_next_pos(params, coords, inputs, observations);
-                /*if (((mov_vector_potential_fields.distance == -1.0f) && (mov_vector_potential_fields.angle == -1.0f)) || next_state_surround_obstacle != 0)
+                mov_vector_potential_fields = gen_next_pos(params, coords, inputs, observations, &stflag);
+                printf("cond 1 %i", (nestados > 0 && nestados <= 4));
+                printf("cond 2 %i", ((mov_vector_potential_fields.distance == -1.0f) && (mov_vector_potential_fields.angle == -1.0f)));
+                if ((nestados > 0 && nestados <= 4) || stflag) {
                     mov_vector_potential_fields = state_machine_surround_obstacle(
-                        quantized_obs, state, &next_state_surround_obstacle, inputs.Mag_Advance,
-                        inputs.max_angle);*/
+                            quantized_obs, state, &next_state_surround_obstacle, inputs.Mag_Advance,
+                            inputs.max_angle);
+                    nestados ++;
+                }
+                if (nestados > 4) {
+                    nestados = 0;
+                    stflag = 0;
+                }
+                printf("nestados %i\n", nestados);
                 DistTheta.angle = mov_vector_potential_fields.angle;
                 DistTheta.distance = mov_vector_potential_fields.distance;
+                printf("dist %f, ang %f", DistTheta.distance, DistTheta.angle);
                 // printf("movement avoidance destination: angle  %f distance %f\n",
                 // mov_vector_avoidance_destination.angle,mov_vector_avoidance_destination.distance);
                 break;
