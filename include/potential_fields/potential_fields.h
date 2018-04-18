@@ -22,6 +22,8 @@ coord get_attractive_force(float d, float e, coord robot, coord dest) {
         attf.yc = attf.yc / moddiff;
     }
 
+    printf("attractive force: %f, %f, mod: %f\n", attf.xc, attf.yc, mod(attf));
+
     return attf;
 }
 
@@ -30,6 +32,9 @@ coord get_repulsive_force(float d0, float eta, coord robot, coord obs) {
     float moddiff = mod(diff);
     float factor = -eta * (1 / moddiff - 1 / d0);
     coord repf = {factor * diff.xc / std::pow(moddiff, 3), factor * diff.yc / std::pow(moddiff, 3), 0.0};
+
+    printf("repulsive force: %f, %f, mod: %f\n", repf.xc, repf.yc, mod(repf));
+
     return repf;
 }
 
@@ -59,8 +64,8 @@ coord get_obs_location(int num_sensors, float theta_sensor, float range_sensor, 
         nearest_sensor_value = LARGEST_DISTANCE_SENSORS;
     ang_sensor = theta_sensor + nearest_sensor_idx * ang_btw_sensors;
     //printf("ang sensor: %f\n", ang_sensor);
-    obs.xc = float (robot.xc + nearest_sensor_value * cos(ang_sensor + robot.anglec));
-    obs.yc = float (robot.yc + nearest_sensor_value * sin(ang_sensor + robot.anglec));
+    obs.xc = float (robot.xc + nearest_sensor_value * cos(ang_sensor) * cos(robot.anglec));
+    obs.yc = float (robot.yc + nearest_sensor_value * sin(ang_sensor) * sin(robot.anglec));
     //printf("sensor: %i, value: %f, obs(%f, %f), robot(%f, %f)\n", nearest_sensor_idx, nearest_sensor_value, obs.xc, obs.yc, robot.xc, robot.yc);
     return obs;
 }
@@ -90,20 +95,8 @@ AdvanceAngle get_displacement_vector(coord robot, coord next_pos) {
     AdvanceAngle displacement;
     coord diff = {next_pos.xc - robot.xc, next_pos.yc - robot.yc, 0.0};
     displacement.distance = mod(diff);
-    displacement.angle = std::atan(diff.yc/diff.xc) - robot.anglec;
+    displacement.angle = std::atan2(diff.yc, diff.xc) - robot.anglec;
 
-    /*if (next_pos.xc < robot.xc) {
-        displacement.angle += 3.1415;
-        // printf("\n Angulo que deves girar : %f\n  ",res.anglec);
-    }
-
-    if (next_pos.xc < robot.xc && next_pos.yc < robot.yc) {
-        displacement.angle = (float) (displacement.angle - robot.anglec - 3.1415);
-    } else {
-        displacement.angle = (float) (displacement.angle - robot.anglec + 3.1415);
-    }*/
-
-    //printf("displacement: %f, %f", displacement.distance, displacement.angle);
     return displacement;
 }
 

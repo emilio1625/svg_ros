@@ -125,10 +125,10 @@ int go_to(int flag_environment, int flag_laser, int flag_light) {
 
 
     // potential fields
-    float d = 0.03;
+    float d = 0.05;
     float e = 2;
-    float d0 = inputs.largest_value * 8;
-    float eta = 0.003;
+    float d0 = inputs.largest_value * 0.5f;
+    float eta = 0.0005;
     float params[] = {d, e, d0, eta};
     coord coords[2];
 
